@@ -31,12 +31,19 @@ class SimpleFacerec:
             # Get the filename only from the initial file path.
             basename = os.path.basename(img_path)
             (filename, ext) = os.path.splitext(basename)
-            # Get encoding
-            img_encoding = face_recognition.face_encodings(rgb_img)[0]
-
-            # Store file name and file encoding
-            self.known_face_encodings.append(img_encoding)
-            self.known_face_names.append(filename)
+            
+            # Get encoding - fix the IndexError
+            face_encodings = face_recognition.face_encodings(rgb_img)
+            if len(face_encodings) > 0:
+                img_encoding = face_encodings[0]
+                
+                # Store file name and file encoding
+                self.known_face_encodings.append(img_encoding)
+                self.known_face_names.append(filename)
+                print(f"Encoded {filename}")
+            else:
+                print(f"No face found in {filename}. Skipping...")
+                
         print("Encoding images loaded")
 
     def detect_known_faces(self, frame):
